@@ -8,19 +8,18 @@ GAME_MAZE_STRUCT        = generateMaze.generateMaze(20)                 #미로 
 GAME_TITLE = "Maze Game"                #Default: "Maze Game"
 GAME_RESIZEABLE_TB      = False              #Default: False
 GAME_RESIZEABLE_LR      = False              #Default: False 
-GAME_MAZE_BLOCK_SIZE_WIDTH  = 10
-GAME_MAZE_BLOCK_SIZE_HEIGHT = 10
+GAME_MAZE_BLOCK_SIZE_WIDTH  = 20
+GAME_MAZE_BLOCK_SIZE_HEIGHT = 20
 GAME_WINDOW_SIZE_WIDTH  = len(GAME_MAZE_STRUCT[0]) * GAME_MAZE_BLOCK_SIZE_WIDTH         #윈도우 넓이, Default: 640
 GAME_WINDOW_SIZE_HEIGHT = len(GAME_MAZE_STRUCT) * GAME_MAZE_BLOCK_SIZE_HEIGHT         #윈도우 높이, Default: 400
 GAME_WINDOW_STARTPOS_X  = 100         #윈도우 시작 X좌표, Default: 100
 GAME_WINDOW_STARTPOS_Y  = 100         #윈도우 시작 Y좌표, Default: 100
+GAME_WINDOW_PADDING_X   = 20
+GAME_WINDOW_PADDING_Y   = 20
 GAME_WINDOW_SIZE = str(GAME_WINDOW_SIZE_WIDTH) + "x" \
                     + str(GAME_WINDOW_SIZE_HEIGHT) + "+" \
                     + str(GAME_WINDOW_STARTPOS_X) + "+" \
                     + str(GAME_WINDOW_STARTPOS_Y) #윈도우 사이즈 
-
-
-                
 
 def main():
     window = tkinter.Tk()
@@ -39,6 +38,7 @@ def main():
                                             x * GAME_MAZE_BLOCK_SIZE_WIDTH + GAME_MAZE_BLOCK_SIZE_WIDTH, \
                                             y * GAME_MAZE_BLOCK_SIZE_HEIGHT + GAME_MAZE_BLOCK_SIZE_HEIGHT, fill="green")
 
+    DrawMaze()
 
     window.mainloop()
 
