@@ -1,6 +1,7 @@
 import tkinter
 import tkinter.font as tkFont
 import generateMaze
+from datetime import datetime
 
 # 게임 세팅 기본 변수 설정
 # 위 변수들은 대문자로 선언
@@ -22,12 +23,18 @@ GAME_WINDOW_SIZE = str(GAME_WINDOW_SIZE_WIDTH) + "x" \
                     + str(GAME_WINDOW_STARTPOS_Y) #윈도우 사이즈 
 GAME_START_POS = [[j,i] for i in range(len(GAME_MAZE_STRUCT)) for j in range(len(GAME_MAZE_STRUCT[i])) if GAME_MAZE_STRUCT[i][j] == 2] # 시작 위치
 GAME_END_POS = [[j,i] for i in range(len(GAME_MAZE_STRUCT)) for j in range(len(GAME_MAZE_STRUCT[i])) if GAME_MAZE_STRUCT[i][j] == 3]
+GAME_STOPWATCH_START = None
+GAME_STOPWATCH_END   = None
+
+
 key = 0
 #print(GAME_START_POS[0])
 posx = GAME_START_POS[0][0]
 posy = GAME_START_POS[0][1]
 #print(posx, posy)
 state = 0
+
+task = None
 
 def main():
 
@@ -69,12 +76,14 @@ def main():
             canvas.move("start_pos", GAME_MAZE_BLOCK_SIZE_WIDTH, 0)
         #canvas.move("start_pos", posx, posy)
         #print(canvas.coords("start_pos"))
-        print(posx, posy)
+        #print(posx, posy)
     
     def mainPage():
         frm_main  = tkinter.Frame(window, bd=1)
 
         def gameStart():
+            global GAME_STOPWATCH_START
+            GAME_STOPWATCH_START = datetime.now()
             frm_main.place_forget()
             DrawMaze()
             window.bind("<Key>", key_down)
@@ -86,22 +95,34 @@ def main():
         frm_main.place(relx=.5, rely=.5, anchor="c")
 
     def endPage():
+        global GAME_STOPWATCH_END
+        GAME_STOPWATCH_END = datetime.now()
+        elapsed_time = GAME_STOPWATCH_END - GAME_STOPWATCH_START
+        canvas.pack_forget()
         frm_end = tkinter.Frame(window, bd=1)
 
         lbl_title = tkinter.Label(frm_end, text="게임 끝", fg="black", font=tkFont.Font(size=30))
+        lbl_elapsed_time = tkinter.Label(frm_end, text=str(elapsed_time), fg="black", font=tkFont.Font(size=30))
+        lbl_return = tkinter.Button(frm_end, text="게임 시작", width=15, command=mainPage, padx=20)
         lbl_title.pack()
+        lbl_return.pack()
+        lbl_elapsed_time.pack()
         frm_end.place(relx=.5, rely=.5, anchor="c")
         window.unbind("<Key>")
 
     def stateEventListener():
+        global task, GAME_STOPWATCH_START
         #global state
         if [posx, posy] == GAME_END_POS[0]:
             #state = 1
             endPage()
-        window.after(100, stateEventListener)
-
+            window.after_cancel(task)
+            return
+        task = window.after(10, stateEventListener)
+    
     mainPage()
     stateEventListener()
+    #window.after(10, stopwatch)
     window.mainloop()
 
 if __name__ == "__main__":
