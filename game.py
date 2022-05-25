@@ -1,11 +1,12 @@
 import tkinter
 import tkinter.font as tkFont
 import generateMaze
+import asyncio
 from datetime import datetime
 
 # 게임 세팅 기본 변수 설정
 # 위 변수들은 대문자로 선언
-GAME_MAZE_STRUCT        = generateMaze.generateMaze(5)                 #미로 구조 변수, 만지지 말기
+GAME_MAZE_STRUCT        = generateMaze.generateMaze(13)                 #미로 구조 변수, 만지지 말기
 GAME_TITLE              = "Maze Game"                #Default: "Maze Game"
 GAME_RESIZEABLE_TB      = False              #Default: False
 GAME_RESIZEABLE_LR      = False              #Default: False 
@@ -15,7 +16,7 @@ GAME_WINDOW_SIZE_WIDTH  = len(GAME_MAZE_STRUCT[0]) * GAME_MAZE_BLOCK_SIZE_WIDTH 
 GAME_WINDOW_SIZE_HEIGHT = len(GAME_MAZE_STRUCT) * GAME_MAZE_BLOCK_SIZE_HEIGHT         #윈도우 높이, Default: 400
 GAME_WINDOW_STARTPOS_X  = 100         #윈도우 시작 X좌표, Default: 100
 GAME_WINDOW_STARTPOS_Y  = 100         #윈도우 시작 Y좌표, Default: 100
-GAME_WINDOW_PADDING_X   = 20
+GAME_WINDOW_PADDING_X   = 20    
 GAME_WINDOW_PADDING_Y   = 20
 GAME_WINDOW_SIZE = str(GAME_WINDOW_SIZE_WIDTH) + "x" \
                     + str(GAME_WINDOW_SIZE_HEIGHT) + "+" \
@@ -37,8 +38,6 @@ posy = GAME_START_POS[0][1]
 #task = None
 start_pos = None
 
-
-
 window = tkinter.Tk()
 window.title(GAME_TITLE)
 window.geometry(GAME_WINDOW_SIZE)
@@ -49,7 +48,7 @@ canvas = tkinter.Canvas(width=GAME_WINDOW_SIZE_WIDTH, height=GAME_WINDOW_SIZE_HE
 def DrawMaze():
     global start_pos
     canvas.pack()
-    canvas.delete("walls")
+    #canvas.delete("walls")
     if start_pos is not None:
         canvas.delete(start_pos)
         start_pos = None
@@ -82,14 +81,19 @@ def key_down(e):
         posx += 1
         canvas.move("start_pos", GAME_MAZE_BLOCK_SIZE_WIDTH, 0)
     if [posx, posy] == GAME_END_POS[0]:
+        #print("end")
         endPage()
     #canvas.move("start_pos", posx, posy)
     #print(canvas.coords("start_pos"))
-    print(posx, posy)
+    #print(posx, posy)
 
 def mainPage():
     frm_main  = tkinter.Frame(window, bd=1)
+    for i in range(len(GAME_MAZE_STRUCT)):
+        print(GAME_MAZE_STRUCT[i])
+    print("\n")
 
+    print(debug())
     def gameStart():
         global GAME_STOPWATCH_START, key, posx, posy
         key = 0
@@ -108,15 +112,17 @@ def mainPage():
     frm_main.place(relx=.5, rely=.5, anchor="c")
 
 def endPage():
-    global GAME_STOPWATCH_END
+    global GAME_STOPWATCH_END, GAME_MAZE_STRUCT, GAME_START_POS, GAME_END_POS
     GAME_STOPWATCH_END = datetime.now()
     elapsed_time = GAME_STOPWATCH_END - GAME_STOPWATCH_START
     canvas.pack_forget()
+    canvas.delete("all")
     frm_end = tkinter.Frame(window, bd=1)
 
     def returnPage():
         frm_end.place_forget()
         mainPage()
+        
 
     lbl_title = tkinter.Label(frm_end, text="게임 끝", fg="black", font=tkFont.Font(size=30))
     lbl_elapsed_time = tkinter.Label(frm_end, text=str(elapsed_time), fg="black", font=tkFont.Font(size=30))
@@ -127,6 +133,13 @@ def endPage():
     frm_end.place(relx=.5, rely=.5, anchor="c")
     window.unbind("<Key>")
 
+def debug():
+    print("GAME_MAZE_STRUCT:", GAME_MAZE_STRUCT)
+    print("GAME_TITLE:", GAME_TITLE)
+    print("GAME_START_POS:", GAME_START_POS)
+    print("GAME_END_POS:", GAME_END_POS)
+    print("posx:", posx)
+    print("posy:", posy)
 '''def stateEventListener():
     global task, GAME_STOPWATCH_START
     #global state
